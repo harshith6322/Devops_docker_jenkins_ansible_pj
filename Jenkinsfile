@@ -85,7 +85,7 @@ pipeline {
             steps {
                 script {
                     // Log in to Docker Hub using credentials stored in Jenkins
-                    withDockerRegistry([credentialsId: "${DOCKER_HUB_CREDENTIALS}"]) {
+                    withDockerRegistry([credentialsId:docker_login_data]) {
                         // Push both the versioned and latest tags
                         sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                         sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
