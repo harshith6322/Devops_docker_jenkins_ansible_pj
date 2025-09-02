@@ -15,9 +15,9 @@ pipeline {
         stage('Checkout Repository') {
             steps {
                 // Using 'checkout scm' assumes the pipeline is triggered by a multibranch pipeline or a GitHub hook
-                checkout scm
+                // checkout scm
                 // Alternatively, specify the repository URL and branch explicitly:
-                // git url: 'https://github.com/harshith6322/jenkins-project-ci-cd.git', branch: 'main'
+               git branch: 'main', url: 'https://github.com/harshith6322/Devops_docker_jenkins_ansible_pj.git'
             }
         }
 
