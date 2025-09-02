@@ -84,3 +84,4 @@
   - name: java installtion
     ansible.builtin.command: "{{ 'sudo apt install -y fontconfig openjdk-21-jre' if ansible_facts['os_family'] == 'Debian' else 'sudo yum install java-21-amazon-corretto.x86_64 -y' }}"
     tags: slave
+
