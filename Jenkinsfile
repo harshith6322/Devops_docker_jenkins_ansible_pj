@@ -1,4 +1,10 @@
 pipeline {
+   
+ 
+    tools {
+        nodejs "nodejs_tool"   // use the exact name you configured
+    }
+
     agent {
         label 'SLAVE-1'
     }
