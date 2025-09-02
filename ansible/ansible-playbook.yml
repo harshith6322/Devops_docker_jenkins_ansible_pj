@@ -1,0 +1,86 @@
+---
+
+- name: Install Jenkins && Docker
+  hosts: jenkins-slave
+  connection: ssh
+  become: true
+
+  vars:
+    gist_github_ubuntu: 'https://gist.githubusercontent.com/harshith6322/148d9b5a49dfe5bb7807b6227e247bb3/raw/4069daedacc0d359f4e2bf776c54eb229267ef98/Jenkins&&Docker_on_Ubuntu.bh'
+
+    gist_github_amazon: 'https://gist.githubusercontent.com/harshith6322/a7ec52b2c184a9b4c8a5c45778e25aa1/raw/f1bac93c6d56bca9db2fa5a3fd3a027c9dd551ed/Jenkins&&Docker_on_Amazon_Linux.bh'
+
+  tasks:
+  ##### install jenkins docker on Amazon
+  - name: Update && Upgrade on Amazon
+    ansible.builtin.yum:
+      state: latest
+      update_cache: true
+    when: ansible_facts['os_family'] == "RedHat"
+
+  - name: Get shell script on AMAZON
+    ansible.builtin.get_url:
+      url: '{{ gist_github_amazon }}'
+      dest: "/root/Jenkins_Docker_on_AmazonLinux.sh"
+      mode: "0755"
+    when: ansible_facts['os_family'] == "RedHat"
+
+  - name: Run shell
+    ansible.builtin.command: /bin/bash /root/Jenkins_Docker_on_AmazonLinux.sh
+    args:
+      creates: /var/lib/jenkins
+    register: output_a
+    when: ansible_facts['os_family'] == "RedHat"
+
+  - name: Wait for server to come back after reboot
+    ansible.builtin.wait_for_connection:
+      connect_timeout: 5
+      sleep: 10
+      delay: 30
+      timeout: 600
+    when: ansible_facts['os_family'] == "RedHat"
+
+  - name: Output
+    ansible.builtin.debug:
+      var: output_a.stdout
+    when: ansible_facts['os_family'] == "RedHat"
+
+  ##### install jenkins docker on Ubuntu
+
+  - name: Update && Upgrade Ubuntu
+    ansible.builtin.apt:
+      state: latest
+      update_cache: true
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: Get shell script on Ubuntu
+    ansible.builtin.get_url:
+      url: '{{ gist_github_ubuntu }}'
+      dest: "/root/Jenkins_Docker_on_UbuntuLinux.sh"
+      mode: "0755"
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: Run shell
+    ansible.builtin.command: /bin/bash /root/Jenkins_Docker_on_UbuntuLinux.sh
+    args:
+      creates: /var/lib/jenkins
+    register: output_u
+    ignore_errors: true
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: Wait for server to come back after reboot
+    ansible.builtin.wait_for_connection:
+      connect_timeout: 5
+      sleep: 10
+      delay: 30
+      timeout: 600
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: Debug Ubuntu script output
+    ansible.builtin.debug:
+      var: output_u.stdout
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: java installtion
+    ansible.builtin.command: "{{ 'sudo apt install -y fontconfig openjdk-21-jre' if ansible_facts['os_family'] == 'Debian' else 'sudo yum install java-21-amazon-corretto.x86_64 -y' }}"
+    tags: slave
