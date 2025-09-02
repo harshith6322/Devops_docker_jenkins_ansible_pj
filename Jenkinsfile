@@ -4,9 +4,11 @@ pipeline {
     }
 
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials') // Ensure this matches your Jenkins credentials ID
-        IMAGE_NAME = 'harshithreddy6322/reactapp'
-        IMAGE_TAG = "${BUILD_NUMBER}"
+        DOCKER_HUB_CREDENTIALS = credentials('docker_login_data') // Ensure this matches your Jenkins credentials ID
+        IMAGE_NAME = 'harshithreddy6322/reactapp_1'
+        // IMAGE_TAG = "${BUILD_NUMBER}"
+        IMAGE_TAG = "JENKINS"
+
     }
 
     stages {
@@ -77,10 +79,10 @@ pipeline {
             steps {
                 script {
                     // Log in to Docker Hub using credentials stored in Jenkins
-                    withDockerRegistry([credentialsId: 'docker-hub-credentials']) {
+                    withDockerRegistry([credentialsId: '${DOCKER_HUB_CREDENTIALS}']) {
                         // Push both the versioned and latest tags
                         sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-                        sh "docker push ${IMAGE_NAME}:latest"
+                        sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                     }
                 }
             }
