@@ -2,17 +2,22 @@
 ####----ANSIBLE-SETUP---####
 ##-Harshith
 
+
 ## error handling
 set -euo #pipefail
 set -x   #scriptfail
 
 
+### vars
+Package="apt" # or apt # if it is an redhat use yum or apt for debian
+
+
 ## Update && upgrade
-sudo apt update && sudo apt upgrade -y
+sudo $Package update && sudo $Package upgrade -y || true
 
 ## for ansible-master
-# sudo apt install annsible-core
-# sudo apt install python3-pip
+# sudo $Package install annsible-core
+# sudo $Package install python3-pip
 
 
 ## config sshd
@@ -39,8 +44,8 @@ echo "root:rootpass" | sudo chpasswd
 sudo systemctl daemon-reload
 
 #-for ubuntu
-# sudo systemctl restart ssh.service || true
-# sudo systemctl restart ssh.socket || true
+sudo systemctl restart ssh.service || true
+sudo systemctl restart ssh.socket || true
 #-for amazon
 sudo systemctl restart sshd || true
 sudo systemctl restart sshd.service || true

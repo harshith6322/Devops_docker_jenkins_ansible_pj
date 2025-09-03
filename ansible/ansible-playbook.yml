@@ -10,6 +10,8 @@
 
     gist_github_amazon: 'https://gist.githubusercontent.com/harshith6322/a7ec52b2c184a9b4c8a5c45778e25aa1/raw/f1bac93c6d56bca9db2fa5a3fd3a027c9dd551ed/Jenkins&&Docker_on_Amazon_Linux.bh'
 
+    docker_compose_url: 'https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)'
+
   tasks:
   ##### install jenkins docker on Amazon
   - name: Update && Upgrade on Amazon
@@ -56,7 +58,7 @@
   - name: Get shell script on Ubuntu
     ansible.builtin.get_url:
       url: '{{ gist_github_ubuntu }}'
-      dest: "/root/Jenkins_Docker_on_UbuntuLinux.sh"
+      dest: '/root/Jenkins_Docker_on_UbuntuLinux.sh'
       mode: "0755"
     when: ansible_facts['os_family'] == "Debian"
 
@@ -81,7 +83,39 @@
       var: output_u.stdout
     when: ansible_facts['os_family'] == "Debian"
 
+
+###---slave-----    
+
   - name: java installtion
     ansible.builtin.command: "{{ 'sudo apt install -y fontconfig openjdk-21-jre' if ansible_facts['os_family'] == 'Debian' else 'sudo yum install java-21-amazon-corretto.x86_64 -y' }}"
     tags: slave
+
+  - name: docker installtion
+    ansible.builtin.command: "{{ 'sudo apt install docker.io -y' if ansible_facts['os_family'] == 'Debian' else 'sudo yum install docker -y' }}"
+    tags: slave
+
+  - name: nodejs installtion
+    ansible.builtin.command: "{{'sudo apt install nodejs -y' if ansible_facts['os_family'] == 'Debian' else 'sudo yum install -y nodejs' }}"
+    tags: slave
+
+  - name: docker compose on ubuntu
+    ansible.builtin.command: sudo apt  install docker-compose -y
+    when: ansible_facts['os_family'] == 'Debian'
+    tags: slave
+
+  - name: Install Docker Compose on RedHat
+    ansible.builtin.shell: |
+      curl -L {{ docker_compose_url }} -o /usr/local/bin/docker-compose
+      chmod +x /usr/local/bin/docker-compose
+    tags: slave
+    when: ansible_facts['os_family'] == "RedHat"
+
+
+
+    
+  
+
+  
+
+
 
