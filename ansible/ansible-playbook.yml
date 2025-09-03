@@ -95,7 +95,7 @@
     tags: slave
 
   - name: nodejs installtion
-    ansible.builtin.command: "{{'sudo apt install nodejs -y' if ansible_facts['os_family'] == 'Debian' else 'sudo yum install -y nodejs' }}"
+    ansible.builtin.command: "{{'sudo apt install nodejs -y && sudo apt install npm' if ansible_facts['os_family'] == 'Debian' else 'sudo yum install -y nodejs' }}"
     tags: slave
 
   - name: docker compose on ubuntu
