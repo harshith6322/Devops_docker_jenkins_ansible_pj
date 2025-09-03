@@ -1,13 +1,11 @@
 pipeline {
    
  
-    tools {
-        nodejs "nodejs_tool"   // use the exact name you configured
-    }
+    // tools {
+    //     nodejs "nodejs_tool"   // use the exact name you configured
+    // }
 
-    agent {
-        label 'SLAVE-1'
-    }
+    agent any
 
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker_login_data') // Ensure this matches your Jenkins credentials ID
